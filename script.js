@@ -45,7 +45,7 @@ function atualiza() {
 
 //Função para desenhar o jogo
 function desenha() {
-    contexto.fillStyle = "#5f9ea0"
+    contexto.fillStyle = "#6495ed"
     contexto.fillRect(0, 0, LARGURA, ALTURA)
 }
 
