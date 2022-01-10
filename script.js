@@ -1,5 +1,5 @@
 //Variáveis do Jogo
-var canvas, contexto, ALTURA, LARGURA, frames=0, maxPulos= 3, velocidade = 6, estadoAtual,
+var canvas, contexto, ALTURA, LARGURA, frames=0, maxPulos= 3, velocidade = 6, estadoAtual, recorde,
 
 estados = {
     jogar:0,
@@ -28,6 +28,7 @@ bloco = {
     velocidade: 0,
     forcaDoPulo: 22,
     qntPulos: 0,
+    score: 0,
 
     atualiza: function() {
         this.velocidade += this.gravidade
@@ -47,6 +48,18 @@ bloco = {
         }
     },
 
+    reset: function() {
+        this.velocidade = 0
+        this.y = 0
+
+        if (this.score > recorde) {
+            localStorage.setItem("recorde", this.score)
+            recorde = this.score
+        }
+
+        this.score = 0
+    },
+
     desenha: function() {
         contexto.fillStyle = this.cor
         contexto.fillRect(this.x, this.y, this.largura, this.altura)    
@@ -61,7 +74,8 @@ obstaculos = {
     insere: function() {
         this.objeto.push({
             x: LARGURA,
-            largura: 30 + Math.floor( 21 * Math.random()),
+            //largura: 30 + Math.floor( 21 * Math.random()),
+            largura: 40,
             altura: 30 + Math.floor(120 * Math.random()),
             cor: this.cores[Math.floor(4 * Math.random())],
         })
@@ -82,6 +96,10 @@ obstaculos = {
 
             if (bloco.x < obs.x + obs.largura && bloco.x + bloco.largura >= obs.x && bloco.y + bloco.altura >= chao.y - obs.altura) {
                 estadoAtual = estados.perdeu
+            }
+
+            else if (obs.x == 0) {
+                bloco.score++
             }
 
             else if (obs.x <= -obs.largura) {
@@ -116,8 +134,8 @@ function clique(evento) {
     }
     else if (estadoAtual == estados.perdeu && bloco.y >= 2 * ALTURA) {
         estadoAtual = estados.jogar
-        bloco.velocidade = 0
-        bloco.y = 0
+        obstaculos.limpa()
+        bloco.reset()
     }
 }
 
@@ -142,6 +160,12 @@ function main() {
     document.addEventListener("mousedown", clique)
 
     estadoAtual = estados.jogar
+    recorde = localStorage.getItem("recorde")
+
+    if (recorde == null) {
+        recorde = 0
+    }
+
     roda() 
 
 }
@@ -163,15 +187,16 @@ function atualiza() {
     if (estadoAtual == estados.jogando) {
     obstaculos.atualiza()
     }
-    else if (estadoAtual == estados.perdeu) {
-        obstaculos.limpa()
-    }
 }
 
 //Função para desenhar o jogo
 function desenha() {
     contexto.fillStyle = "#6495ed"
     contexto.fillRect(0, 0, LARGURA, ALTURA)
+
+    contexto.fillStyle = "#fff"
+    contexto.font = "50px Arial"
+    contexto.fillText(bloco.score, 30, 68)
 
     if (estadoAtual == estados.jogar) {
         contexto.fillStyle = "green"
@@ -180,7 +205,22 @@ function desenha() {
     else if (estadoAtual == estados.perdeu) {
         contexto.fillStyle = "red"
         contexto.fillRect(LARGURA / 2 - 50, ALTURA / 2 - 50 , 100, 100)
-    }
+    
+        contexto.save()
+        contexto.translate(LARGURA / 2, ALTURA / 2)
+        contexto.fillStyle = "#fff"
+
+        if (bloco.score < 10) {
+            contexto.fillText(bloco.score, -13, 19)
+        }
+        else if (bloco.score >= 10 && bloco.score < 100) {
+            contexto.fillText(bloco.score, -26, 19)
+        }
+        else {
+            contexto.fillText(bloco.score, -39, 19)
+        }
+        contexto.restore()
+    }    
 
     else if (estadoAtual == estados.jogando) {
         obstaculos.desenha()
