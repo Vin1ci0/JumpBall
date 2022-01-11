@@ -1,5 +1,5 @@
 //Variáveis do Jogo
-var canvas, contexto, ALTURA, LARGURA, frames=0, maxPulos= 3, velocidade = 6, estadoAtual, recorde,
+var canvas, contexto, ALTURA, LARGURA, frames=0, maxPulos= 3, velocidade = 6, estadoAtual, recorde, img,
 
 estados = {
     jogar:0,
@@ -10,7 +10,7 @@ estados = {
 chao = {
     y: 550,
     altura: 50,
-    cor: "#006400",
+    cor: "#d3d3d3",
 
     desenha: function() {
         contexto.fillStyle = this.cor
@@ -68,7 +68,7 @@ bloco = {
 
 obstaculos = {
     objeto: [],
-    cores: ["#800080", "#ff0000", "#deb887", "#ff8c00"],
+    cores: ["#ff0000", "#000080", "#ff8c00", "#ffa500"],
     tempoInsere: 0,
 
     insere: function() {
@@ -166,6 +166,10 @@ function main() {
         recorde = 0
     }
 
+    img = new Image()
+    img.src = "Banco de Imagens/fundo.jpg"
+
+
     roda() 
 
 }
@@ -191,8 +195,9 @@ function atualiza() {
 
 //Função para desenhar o jogo
 function desenha() {
-    contexto.fillStyle = "#6495ed"
-    contexto.fillRect(0, 0, LARGURA, ALTURA)
+    //contexto.fillStyle = "#6495ed"
+    //contexto.fillRect(0, 0, LARGURA, ALTURA)
+    fundo.desenha(0, 0)
 
     contexto.fillStyle = "#fff"
     contexto.font = "50px Arial"
@@ -209,6 +214,20 @@ function desenha() {
         contexto.save()
         contexto.translate(LARGURA / 2, ALTURA / 2)
         contexto.fillStyle = "#fff"
+
+        if (bloco.score > recorde) {
+            contexto.fillText("Novo Recorde!", -150, -65)
+        }
+        else if (recorde < 10) {
+            contexto.fillText("Recorde " + recorde, -99, -65)
+        }
+        else if (recorde >=10 && recorde < 100) {
+            contexto.fillText("Recorde " + recorde, -112, -65 )
+        }
+        else {
+            contexto.fillText("Recorde " + recorde, -125, -65)
+        }
+
 
         if (bloco.score < 10) {
             contexto.fillText(bloco.score, -13, 19)
