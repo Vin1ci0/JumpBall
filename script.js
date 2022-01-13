@@ -213,7 +213,7 @@ function desenha() {
     
         contexto.save()
         contexto.translate(LARGURA / 2, ALTURA / 2)
-        contexto.fillStyle = "#fff"
+        contexto.fillStyle = "#000000"
 
         if (bloco.score > recorde) {
             contexto.fillText("Novo Recorde!", -150, -65)
